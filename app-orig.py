@@ -17,12 +17,12 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 app.config['suppress_callback_exceptions'] = True
-app.title='Customer Predictions!'
+app.title='Titanic!'
 
 
 ## Layout
 app.layout = html.Div([
-    html.H1('Predicting Customer Responses'),
+    html.H1('Surviving the Titanic'),
     dcc.Tabs(id="tabs-template", value='tab-1-template', children=[
         dcc.Tab(label='Introduction', value='tab-1-template'),
         dcc.Tab(label='Model Evaluation', value='tab-2-template'),
@@ -65,26 +65,28 @@ def page_3_dropdown(value):
 @app.callback(Output('survival-prob', 'children'),
               [Input('page-3-dropdown', 'value')])
 def page_3_survival(value):
-    response=df.loc[value, 'response_prob']
-    actual=df.loc[value, 'Responded']
-    responded=round(response*100)
-    return f'Predicted probability of responding is {response}%, Actual response is {actual}'
+    survival=df.loc[value, 'survival_prob']
+    actual=df.loc[value, 'Survived']
+    survival=round(survival*100)
+    return f'Predicted probability of survival is {survival}%, Actual survival is {actual}'
 
 # Tab 3 callback # 2
-@app.callback(Output('response-characteristics', 'children'),
+@app.callback(Output('survival-characteristics', 'children'),
               [Input('page-3-dropdown', 'value')])
 def page_3_characteristics(value):
-    mydata=df.drop(['Responded', 'response_prob', 'Name'], axis=1)
-    mydata=df[[ 'Marital_Status', 'PriorCampaign', 'Children', 'Age (20, 28]',
-       'Age (28, 38]', 'Age (38, 80]', 'UnderGraduate', 'Graduate',
-       'PostGraduate', 'Income (1, 10000]', 'Income (10000, 25000]',
-       'Income (25000, 50000]', 'Income (50000, 75000]',
-       'Income (75000, 670000]', 'Recency (0, 35]', 'Recency (35, 65]',
-       'Recency (65, 100]', 'MntSpent (0, 600]', 'MntSpent (600, 1200]',
-       'MntSpent (1200, 1800]', 'MntSpent (1800, 2600]',
-       'NumWebVisitsMonth (0, 5]', 'NumWebVisitsMonth (5, 10]',
-       'NumWebVisitsMonth (10, 15]', 'NumWebVisitsMonth (15, 20]',
-       'CustYrsMoreThan7', 'NumPurchases (0, 25]', 'NumPurchases (25, 50]']]]
+    mydata=df.drop(['Survived', 'survival_prob', 'Name'], axis=1)
+    mydata=df[['Siblings and Spouses',
+                 'female',
+                 'Cabin Class 2',
+                 'Cabin Class 3',
+                 'Cherbourg',
+                 'Queenstown',
+                 'Age (20, 28]',
+                 'Age (28, 38]',
+                 'Age (38, 80]',
+                 'Mrs.',
+                 'Miss',
+                 'VIP']]
     return html.Table(
         [html.Tr([html.Th(col) for col in mydata.columns])] +
         [html.Tr([

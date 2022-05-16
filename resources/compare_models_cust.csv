@@ -1,0 +1,4 @@
+,naive bayes,logistic regression,k-nearest neighbors,random forest
+F1 score,31.4,36.4,33.3,43.3
+Accuracy,21.0,84.2,83.7,84.7
+AUC score,51.8,61.1,59.9,64.3
