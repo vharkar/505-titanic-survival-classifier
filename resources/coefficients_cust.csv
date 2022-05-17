@@ -1,29 +1,27 @@
 feature,coefficient
-PriorCampaign,1.74
-"NumWebVisitsMonth (5, 10]",1.3
-"MntSpent (1800, 2600]",0.78
-PostGraduate,0.58
-CustYrsMoreThan7,0.52
-"Income (75000, 670000]",0.33
-"Income (1, 10000]",0.33
-"MntSpent (1200, 1800]",0.23
-"NumPurchases (0, 25]",0.19
-"Recency (0, 35]",0.07
-"NumWebVisitsMonth (0, 5]",0.07
-"Age (38, 80]",0.06
-"Age (20, 28]",0.06
-"NumWebVisitsMonth (10, 15]",-0.04
-Graduate,-0.04
-"Income (25000, 50000]",-0.07
-"Age (28, 38]",-0.08
-"NumPurchases (25, 50]",-0.09
-"Income (10000, 25000]",-0.17
-"MntSpent (600, 1200]",-0.33
-"NumWebVisitsMonth (15, 20]",-0.38
-"Income (50000, 75000]",-0.42
-UnderGraduate,-0.55
-Children,-0.67
-"MntSpent (0, 600]",-0.67
-"Recency (35, 65]",-0.79
-Marital_Status,-1.17
-"Recency (65, 100]",-1.34
+PriorCampaign,1.84
+"MntSpent (1800, 2400]",0.79
+CustYrsMoreThan7,0.74
+PostGraduate,0.54
+"Recency (0, 25]",0.44
+Single,0.43
+NewlySingle,0.38
+"Income (25000, 50000]",0.27
+"Income (1, 25000]",0.2
+"MntSpent (1200, 1800]",0.19
+"Income (75000, 100000]",0.06
+Graduate,-0.0
+"MntSpent (2400, 3000]",-0.02
+NumPurchasesMoreThan25,-0.1
+"Income (100000, 670000]",-0.13
+Age,-0.18
+Children,-0.33
+"MntSpent (600, 1200]",-0.34
+"Income (50000, 75000]",-0.4
+UnderGraduate,-0.54
+WebVisitsMoreThan10,-0.58
+"Recency (25, 50]",-0.6
+"MntSpent (0, 600]",-0.61
+Relationship,-0.81
+"Recency (50, 75]",-0.82
+"Recency (75, 100]",-1.25

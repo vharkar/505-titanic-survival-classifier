@@ -5,11 +5,11 @@ import plotly.graph_objs as go
 import pandas as pd
 import numpy as np
 import pickle
-from tabs import tab_1, tab_2, tab_3, tab_4
-from utils import display_eval_metrics, Viridis
+from tabs import tab_1_cust, tab_2_cust, tab_3_cust, tab_4_cust
+from utils_cust import display_eval_metrics, Viridis
 
 
-df=pd.read_csv('resources/final_probs.csv')
+df=pd.read_csv('resources/final_probs_cust.csv')
 
 
 ## Instantiante Dash
@@ -39,13 +39,13 @@ app.layout = html.Div([
               [Input('tabs-template', 'value')])
 def render_content(tab):
     if tab == 'tab-1-template':
-        return tab_1.tab_1_layout
+        return tab_1_cust.tab_1_layout
     elif tab == 'tab-2-template':
-        return tab_2.tab_2_layout
+        return tab_2_cust.tab_2_layout
     elif tab == 'tab-3-template':
-        return tab_3.tab_3_layout
+        return tab_3_cust.tab_3_layout
     elif tab == 'tab-4-template':
-        return tab_4.tab_4_layout
+        return tab_4_cust.tab_4_layout
 
 # Tab 2 callbacks
 
@@ -58,11 +58,11 @@ def radio_results(value):
 @app.callback(Output('page-3-content', 'children'),
               [Input('page-3-dropdown', 'value')])
 def page_3_dropdown(value):
-    name=df.loc[value, 'Name']
-    return f'You have selected "{name}"'
+    id=df.loc[value, 'ID']
+    return f'You have selected "{id}"'
 
 # Tab 3 callback # 2
-@app.callback(Output('survival-prob', 'children'),
+@app.callback(Output('response-prob', 'children'),
               [Input('page-3-dropdown', 'value')])
 def page_3_survival(value):
     response=df.loc[value, 'response_prob']
@@ -74,17 +74,14 @@ def page_3_survival(value):
 @app.callback(Output('response-characteristics', 'children'),
               [Input('page-3-dropdown', 'value')])
 def page_3_characteristics(value):
-    mydata=df.drop(['Responded', 'response_prob', 'Name'], axis=1)
-    mydata=df[[ 'Marital_Status', 'PriorCampaign', 'Children', 'Age (20, 28]',
-       'Age (28, 38]', 'Age (38, 80]', 'UnderGraduate', 'Graduate',
-       'PostGraduate', 'Income (1, 10000]', 'Income (10000, 25000]',
-       'Income (25000, 50000]', 'Income (50000, 75000]',
-       'Income (75000, 670000]', 'Recency (0, 35]', 'Recency (35, 65]',
-       'Recency (65, 100]', 'MntSpent (0, 600]', 'MntSpent (600, 1200]',
-       'MntSpent (1200, 1800]', 'MntSpent (1800, 2600]',
-       'NumWebVisitsMonth (0, 5]', 'NumWebVisitsMonth (5, 10]',
-       'NumWebVisitsMonth (10, 15]', 'NumWebVisitsMonth (15, 20]',
-       'CustYrsMoreThan7', 'NumPurchases (0, 25]', 'NumPurchases (25, 50]']]]
+    mydata=df.drop(['Responded', 'response_prob', 'ID'], axis=1)
+    mydata=df[['PriorCampaign', 'Children',
+                'Age', 'Single', 'NewlySingle', 'Relationship',
+                'UnderGraduate', 'Graduate', 'PostGraduate',
+                'Income (1, 25000]', 'Income (25000, 50000]', 'Income (50000, 75000]', 'Income (75000, 100000]', 'Income (100000, 670000]',
+                'Recency (0, 25]', 'Recency (25, 50]', 'Recency (50, 75]', 'Recency (75, 100]',
+                'MntSpent (0, 600]', 'MntSpent (600, 1200]', 'MntSpent (1200, 1800]', 'MntSpent (1800, 2400]', 'MntSpent (2400, 3000]',
+                'WebVisitsMoreThan10', 'CustYrsMoreThan7', 'NumPurchasesMoreThan25']]
     return html.Table(
         [html.Tr([html.Th(col) for col in mydata.columns])] +
         [html.Tr([
@@ -95,58 +92,107 @@ def page_3_characteristics(value):
 # Tab 4 Callback # 1
 @app.callback(Output('user-inputs-box', 'children'),
             [
-              Input('family_dropdown', 'value'),
-              Input('age_dropdown', 'value'),
-              Input('cabin_dropdown', 'value'),
-              Input('title_radio', 'value'),
-              Input('sex_radio', 'value'),
-              Input('port_radio', 'value')
+              Input('Education_dropdown', 'value'),
+              Input('Age_dropdown', 'value'),
+              Input('Income_dropdown', 'value'),
+              Input('MaritalStatus_dropdown', 'value'),
+              Input('Spending_dropdown', 'value'),
+              Input('NumPurchases_dropdown', 'value'),
+              Input('Recency_dropdown', 'value'),
+              Input('Webvisits_dropdown', 'value'),
+              Input('children_radio', 'value'),
+              Input('priorCmpgn_radio', 'value'),
+              Input('customerSince_radio', 'value')
               ])
-def update_user_table(family, age, cabin, title, sex, embark):
+def update_user_table(edu, age, income, mstatus, spending, nump, recency, visits, children, priorCmpgn, customerSince):
     return html.Div([
-        html.Div(f'Family Members: {family}'),
+        html.Div(f'Education: {edu}'),
         html.Div(f'Age: {age}'),
-        html.Div(f'Cabin Class: {cabin}'),
-        html.Div(f'Title: {title}'),
-        html.Div(f'Sex: {sex}'),
-        html.Div(f'Embarkation: {embark}'),
+        html.Div(f'Income: {income}'),
+        html.Div(f'Marital Status: {mstatus}'),
+        html.Div(f'Children in household: {children}'),
+        html.Div(f'Customer since (in years): {customerSince}'),
+        html.Div(f'Amount Spent: {spending}'),
+        html.Div(f'Number of Purchases: {nump}'),
+        html.Div(f'Last Purchased (days ago): {recency} '),
+        html.Div(f'Number of web visits: {visits}'),
+        html.Div(f'Responded to prior campaigns: {priorCmpgn}'),
     ])
 
 # Tab 4 Callback # 2
 @app.callback(Output('final_prediction', 'children'),
             [
-              Input('family_dropdown', 'value'),
-              Input('age_dropdown', 'value'),
-              Input('cabin_dropdown', 'value'),
-              Input('title_radio', 'value'),
-              Input('sex_radio', 'value'),
-              Input('port_radio', 'value')
+              Input('Education_dropdown', 'value'),
+              Input('Age_dropdown', 'value'),
+              Input('Income_dropdown', 'value'),
+              Input('MaritalStatus_dropdown', 'value'),
+              Input('Spending_dropdown', 'value'),
+              Input('NumPurchases_dropdown', 'value'),
+              Input('Recency_dropdown', 'value'),
+              Input('Webvisits_dropdown', 'value'),
+              Input('children_radio', 'value'),
+              Input('priorCmpgn_radio', 'value'),
+              Input('customerSince_radio', 'value')
               ])
-def final_prediction(family, age, cabin, title, sex, embark):
-    inputs=[family, age, cabin, title, sex, embark]
-    keys=['family', 'age', 'cabin', 'title', 'sex', 'embark']
-    dict6=dict(zip(keys, inputs))
-    df=pd.DataFrame([dict6])
+def final_prediction(edu, age, income, mstatus, spending, nump, recency, visits, children, priorCmpgn, customerSince):
+    inputs=[mstatus, priorCmpgn, children, age, edu, income, recency, spending, visits, customerSince, nump]
+    keys=['Marital_Status', 'PriorCampaign', 'Children', 'age', 'Education', 'Income', 'Recency', 'MntSpent', 'NumWebVisitsMonth', 'CustYrsMoreThan7', 'NumPurchases']
+    dict11=dict(zip(keys, inputs))
+    df=pd.DataFrame([dict11])
     # create the features we'll need to run our logreg model.
     df['age']=pd.to_numeric(df.age, errors='coerce')
-    df['family']=pd.to_numeric(df.family, errors='coerce')
-    df['third']=np.where(df.cabin=='Third',1,0)
-    df['second']=np.where(df.cabin=='Second',1,0)
-    df['female']=np.where(df.sex=='Female',1,0)
-    df['cherbourg']=np.where(df.embark=='Cherbourg',1,0)
-    df['queenstown']=np.where(df.embark=='Queenstown',1,0)
-    df['age2028']=np.where((df.age>=20)&(df.age<28),1,0)
-    df['age2838']=np.where((df.age>=28)&(df.age<38),1,0)
-    df['age3880']=np.where((df.age>=38)&(df.age<80),1,0)
-    df['mrs']=np.where(df.title=='Mrs.', 1,0)
-    df['miss']=np.where(df.title=='Miss', 1,0)
-    df['vip']=np.where(df.title=='VIP', 1,0)
+    df['Single']=np.where((df.Marital_Status=='Single'),1,0)
+    df['Relationship']=np.where((df.Marital_Status=='Relationship'),1,0)
+    df['NewlySingle']=np.where((df.Marital_Status=='NewlySingle'),1,0)
+
+    df['Children']=np.where((df.Children=='Yes'),1,0)
+    df['PriorCampaign']=np.where((df.PriorCampaign=='Yes'),1,0)
+    df['Income']=pd.to_numeric(df.Income, errors='coerce')
+    df['Recency']=pd.to_numeric(df.Recency, errors='coerce')
+    df['MntSpent']=pd.to_numeric(df.MntSpent, errors='coerce')
+    df['NumWebVisitsMonth']=pd.to_numeric(df.NumWebVisitsMonth, errors='coerce')
+    df['CustYrsMoreThan7']=np.where((df.CustYrsMoreThan7=='Yes'),1,0)
+    df['NumPurchases']=pd.to_numeric(df.NumPurchases, errors='coerce')
+
+    df['Graduate']=np.where(df.Education=='Graduate',1,0)
+    df['PostGraduate']=np.where(df.Education=='PostGraduate',1,0)
+    df['UnderGraduate']=np.where(df.Education=='UnderGraduate',1,0)
+
+    df['Age']=np.where((df.age>50),1,0)
+
+    df['Income125000']=np.where((df.Income>=1)&(df.Income<25000),1,0)
+    df['Income2500050000']=np.where((df.Income>=25000)&(df.Income<50000),1,0)
+    df['Income5000075000']=np.where((df.Income>=50000)&(df.Income<75000),1,0)
+    df['Income75000100000']=np.where((df.Income>=75000)&(df.Income<100000),1,0)
+    df['Income100000670000']=np.where((df.Income>=100000)&(df.Income<670000),1,0)
+
+    df['Recency025']=np.where((df.Recency>=0)&(df.Recency<25),1,0)
+    df['Recency2550']=np.where((df.Recency>=25)&(df.Recency<50),1,0)
+    df['Recency5075']=np.where((df.Recency>=50)&(df.Recency<75),1,0)
+    df['Recency75100']=np.where((df.Recency>=75)&(df.Recency<100),1,0)
+
+    df['MntSpent0600']=np.where((df.MntSpent>=0)&(df.MntSpent<600),1,0)
+    df['MntSpent6001200']=np.where((df.MntSpent>=600)&(df.MntSpent<1200),1,0)
+    df['MntSpent12001800']=np.where((df.MntSpent>=1200)&(df.MntSpent<1800),1,0)
+    df['MntSpent18002400']=np.where((df.MntSpent>=1800)&(df.MntSpent<2400),1,0)
+    df['MntSpent24003000']=np.where((df.MntSpent>=2400)&(df.MntSpent<3000),1,0)
+
+    df['WebVisitsMoreThan10']=np.where((df.NumWebVisitsMonth>10),1,0)
+
+    df['NumPurchasesMoreThan25']=np.where((df.NumPurchases>25),1,0)
+
     # drop unnecessary columns, and reorder columns to match the logreg model.
-    df=df.drop(['age', 'cabin', 'title', 'sex', 'embark'], axis=1)
-    df=df[['family', 'female', 'second', 'third', 'cherbourg', 'queenstown', 'age2028',
-    'age2838', 'age3880', 'mrs', 'miss', 'vip']]
+    df=df.drop(['age', 'Marital_Status', 'Income', 'Education', 'Recency', 'MntSpent', 'NumWebVisitsMonth', 'NumPurchases'], axis=1)
+    df=df[['PriorCampaign', 'Children', 'Age',
+           'Single', 'NewlySingle', 'Relationship',
+           'UnderGraduate', 'Graduate', 'PostGraduate',
+           'Income125000', 'Income2500050000','Income5000075000', 'Income75000100000', 'Income100000670000',
+           'Recency025', 'Recency2550', 'Recency5075', 'Recency75100',
+           'MntSpent0600', 'MntSpent6001200', 'MntSpent12001800', 'MntSpent18002400','MntSpent24003000',
+           'WebVisitsMoreThan10', 'CustYrsMoreThan7', 'NumPurchasesMoreThan25']]
+
     # unpickle the final model
-    file = open('resources/final_logreg_model.pkl', 'rb')
+    file = open('resources/final_logreg_model_cust.pkl', 'rb')
     logreg=pickle.load(file)
     file.close()
     # predict on the user-input values (need to create an array for this)
@@ -159,8 +205,7 @@ def final_prediction(family, age, cabin, title, sex, embark):
 
     prob=logreg.predict_proba(thisarray)
     final_prob=round(float(prob[0][1])*100,1)
-    return(f'Probability of Survival: {final_prob}%')
-
+    return(f'Probability of Responding: {final_prob}%')
 
 
 ####### Run the app #######
